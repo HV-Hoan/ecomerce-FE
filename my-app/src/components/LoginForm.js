@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import "./LoginForm.css";
+import { jwtDecode } from "jwt-decode"; // Import đúng cách
+import "./LoginForm.css"
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");
@@ -21,37 +21,47 @@ const LoginForm = () => {
             });
 
             const { token } = response.data;
-            localStorage.setItem("token", token); // Lưu token vào localStorage
+            localStorage.setItem("token", token);
 
-            // Giải mã token để lấy role
-            const decoded = jwtDecode(token);
+            const decoded = jwtDecode(token); // Giải mã token
+
+            alert("Đăng nhập thành công!");
             if (decoded.role === "admin") {
-                navigate("/admin"); // Chuyển hướng đến trang admin
+                navigate("admin");
             } else {
-                navigate("/user"); // Chuyển hướng đến trang user
+                navigate("user");
             }
         } catch (err) {
-            if (err.response) {
-                setError(err.response.data.message);
-            } else {
-                setError("Lỗi kết nối đến máy chủ");
-            }
+            setError(err.response?.data?.message || "Đăng nhập thất bại");
         }
     };
 
     return (
         <div className="login-container">
             <h2>Đăng nhập</h2>
-            {error && <p className="error-message">{error}</p>}
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <form onSubmit={handleLogin}>
-                <label>Username:</label>
-                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-
-                <label>Password:</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-
-                <button type="submit">Login</button>
+                <div>
+                    <label>Username:</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                </div>
+                <button type="submit">Đăng nhập</button>
             </form>
+            <p>Chưa có tài khoản? <button onClick={() => navigate("/register")}>Đăng ký</button></p>
         </div>
     );
 };
