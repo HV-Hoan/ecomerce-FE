@@ -27,9 +27,9 @@ const LoginForm = () => {
 
             alert("Đăng nhập thành công!");
             if (decoded.role === "admin") {
-                navigate("admin");
+                navigate("/admin");
             } else {
-                navigate("user");
+                navigate("/user");
             }
         } catch (err) {
             setError(err.response?.data?.message || "Đăng nhập thất bại");

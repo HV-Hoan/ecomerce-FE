@@ -1,0 +1,62 @@
+/* Toàn bộ container hiển thị toàn màn hình */
+.category-container {
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
+    background-color: #f0f4f8;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.category-title {
+    margin: 20px;
+    color: #333;
+}
+
+.category-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-item {
+    width: 100%;
+    /* Chiếm toàn bộ chiều ngang */
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.category-item-header {
+    display: flex;
+    align-items: center;
+}
+
+.category-arrow {
+    font-size: 24px;
+    margin-right: 10px;
+    /* Thêm khoảng cách giữa mũi tên và tên category */
+    transition: transform 0.3s ease;
+}
+
+.category-arrow.expanded {
+    transform: rotate(90deg);
+    /* Xoay 90 độ khi menu đổ xuống */
+}
+
+.category-item-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.category-dropdown {
+    padding: 10px 20px;
+    background-color: #e6f7ff;
+    margin-top: 10px;
+    border-radius: 5px;
+    color: #333;
+}
