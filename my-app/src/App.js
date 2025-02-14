@@ -6,17 +6,20 @@ import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
 import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
+
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import UserLayout from "./layouts/UserLayout";
-import "./App.css";
+
+import "./css/App.css";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Layout không có sidebar cho trang đăng nhập/đăng ký */}
+        {/* Layout cho Auth */}
         <Route element={<AuthLayout />}>
+          <Route path="/" element={<LoginForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
         </Route>
@@ -24,16 +27,18 @@ function App() {
         {/* Layout cho Admin */}
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/category" element={<CategoryPage />} />
+          <Route path="/admin/category" element={<CategoryPage />} />
         </Route>
 
         {/* Layout cho User */}
         <Route element={<UserLayout />}>
-          <Route path="/user" element={<UserPage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/user" element={<UserPage />} />
+          <Route path="/user/category" element={<CategoryPage />} />
         </Route>
       </Routes>
     </Router>
+
   );
 }
 

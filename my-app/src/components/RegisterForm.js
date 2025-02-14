@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./RegisterForm.css"; // Đảm bảo file CSS tồn tại
+import "../css/RegisterForm.css"; // Đảm bảo file CSS tồn tại
 
 const RegisterForm = () => {
     const [username, setUsername] = useState("");

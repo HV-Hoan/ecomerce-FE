@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./CategoryForm.css";
+import "../css/CategoryForm.css";
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
@@ -48,7 +48,7 @@ const CategoryList = () => {
             <ul className="category-list">
                 {categories.map((category) => (
                     <li
-                        key={category.id}
+                        key={category.id_Category}
                         className="category-item"
                         onClick={() => toggleCategory(category.id_Category)}
                     >
@@ -57,7 +57,7 @@ const CategoryList = () => {
                                 className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""
                                     }`}
                             >
-
+                                ►
                             </span>
                             <span className="category-item-name">{category.name_Category}</span>
                         </div>

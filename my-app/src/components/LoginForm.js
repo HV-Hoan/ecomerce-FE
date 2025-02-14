@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode"; // Import đúng cách
-import "./LoginForm.css"
+import "../css/LoginForm.css"
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");

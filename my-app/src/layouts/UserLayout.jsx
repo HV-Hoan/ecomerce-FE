@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Link } from "react-router-dom";
-import "./UserLayout.css";
+import "../css/UserLayout.css";
 
 const UserLayout = () => {
     return (
@@ -14,7 +14,9 @@ const UserLayout = () => {
                     <li>
                         <Link to="/user" className="menu-link">User Profile</Link>
                     </li>
-
+                    <li>
+                        <Link to="/user/category" className="menu-link">User Category</Link>
+                    </li>
                 </ul>
             </nav>
 
