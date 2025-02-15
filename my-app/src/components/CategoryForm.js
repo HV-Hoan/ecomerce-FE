@@ -8,9 +8,9 @@ const CategoryList = () => {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchCategoriesWithProducts = async () => {
             try {
-                const response = await fetch("http://localhost:5000/api/category");
+                const response = await fetch("http://localhost:5000/api/category-with-products");
                 if (!response.ok) {
                     throw new Error("Có lỗi xảy ra khi lấy danh sách");
                 }
@@ -23,13 +23,13 @@ const CategoryList = () => {
             }
         };
 
-        fetchCategories();
+        fetchCategoriesWithProducts();
     }, []);
 
     const toggleCategory = (id) => {
         setExpandedCategories((prevState) =>
             prevState.includes(id)
-                ? prevState.filter((categoryId) => categoryId !== id)
+                ? prevState.filter((id_Category) => id_Category !== id)
                 : [...prevState, id]
         );
     };
@@ -54,8 +54,7 @@ const CategoryList = () => {
                     >
                         <div className="category-item-header">
                             <span
-                                className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""
-                                    }`}
+                                className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
                             >
                                 ►
                             </span>
@@ -64,6 +63,17 @@ const CategoryList = () => {
                         {expandedCategories.includes(category.id_Category) && (
                             <div className="category-dropdown">
                                 <p>{category.description_Category}</p>
+                                <ul className="product-list">
+                                    {category.Products?.map(product => (
+                                        <li key={product.id_Product} className="product-item">
+                                            <img
+                                                src={product.image_Product}
+                                                alt={product.name_Product}
+                                                className="product-image"
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
                         )}
                     </li>
