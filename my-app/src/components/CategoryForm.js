@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import RatingStars from "./RatingStars";
 import "../css/CategoryForm.css";
 
 const CategoryList = () => {
@@ -8,26 +9,29 @@ const CategoryList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [role, setRole] = useState(""); // Thêm state để lưu role
+    const [productToDelete, setProductToDelete] = useState(null);
 
     // Lấy danh sách category kèm theo sản phẩm
-    useEffect(() => {
-        const fetchCategoriesWithProducts = async () => {
-            try {
-                const response = await fetch("http://localhost:5000/api/category-with-products");
-                if (!response.ok) {
-                    throw new Error("Có lỗi xảy ra khi lấy danh sách");
-                }
-                const data = await response.json();
-                setCategories(data.list_Category);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
 
+    const fetchCategoriesWithProducts = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/category-with-products");
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi lấy danh sách");
+            }
+            const data = await response.json();
+            setCategories(data.list_Category);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchCategoriesWithProducts();
     }, []);
+
 
     useEffect(() => {
         const fetchRole = async () => {
@@ -45,12 +49,15 @@ const CategoryList = () => {
     }, []);
 
     const toggleCategory = (id) => {
-        setExpandedCategories((prevState) =>
-            prevState.includes(id)
-                ? prevState.filter((id_Category) => id_Category !== id)
-                : [...prevState, id]
-        );
+        setExpandedCategories((prevState) => {
+            if (prevState.includes(id)) {
+                return prevState.filter((id_Category) => id_Category !== id);
+            } else {
+                return [...prevState, id];
+            }
+        });
     };
+
 
     const deleteProduct = async (productId, categoryId) => {
         try {
@@ -76,30 +83,49 @@ const CategoryList = () => {
                         : category
                 )
             );
+            setProductToDelete(null);
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+    const handleRating = async (productId, rating) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/product/${productId}/rate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ rating }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi đánh giá sản phẩm");
+            }
+
+            alert("Đánh giá thành công");
+
+            // Gọi lại danh sách category để lấy điểm trung bình mới
+            fetchCategoriesWithProducts();
         } catch (err) {
             alert(err.message);
         }
     };
 
-    if (loading) {
-        return <p>Đang tải dữ liệu...</p>;
-    }
+    const confirmDelete = (productId, categoryId) => {
+        setProductToDelete({ productId, categoryId }); // Hiển thị modal xác nhận
+    };
 
-    if (error) {
-        return <p>Lỗi: {error}</p>;
-    }
+    if (loading) return <p>Đang tải dữ liệu...</p>;
+    if (error) return <p>Lỗi: {error}</p>;
 
     return (
         <div className="category-container">
             <h1 className="category-title">Danh sách Category</h1>
             <ul className="category-list">
                 {categories.map((category) => (
-                    <li
-                        key={category.id_Category}
-                        className="category-item"
-                        onClick={() => toggleCategory(category.id_Category)}
-                    >
-                        <div className="category-item-header">
+                    <li key={category.id_Category} className="category-item">
+                        <div
+                            className="category-item-header"
+                            onClick={() => toggleCategory(category.id_Category)}
+                        >
                             <span
                                 className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
                             >
@@ -107,7 +133,6 @@ const CategoryList = () => {
                             </span>
                             <span className="category-item-name">{category.name_Category}</span>
                             <p className="category-description">{category.description_Category}</p>
-
                         </div>
                         {expandedCategories.includes(category.id_Category) && (
                             <div className="category-dropdown">
@@ -115,21 +140,23 @@ const CategoryList = () => {
                                     {category.Products?.map(product => (
                                         <li key={product.id_Product} className="product-item">
                                             <div className="product-details">
-                                                <img
-                                                    src={product.image_Product}
-                                                    alt=""
-                                                    className="product-image"
-                                                />
+                                                <img src={product.image_Product} alt="" className="product-image" />
                                                 <div className="product-info">
                                                     <p>{product.name_Product}</p>
+                                                    <RatingStars
+                                                        currentRating={product.rating || 0}
+                                                        onRate={(rating) => handleRating(product.id_Product, rating)}
+                                                    />
+                                                    <span className="average-rating">
+                                                        {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
+                                                    </span>
                                                 </div>
-                                                {/* Hiển thị nút delete nếu role là admin */}
                                                 {role === "admin" && (
                                                     <button
-                                                        className="delete-button align-right"
+                                                        className="delete-button"
                                                         onClick={(e) => {
-                                                            e.stopPropagation(); // Ngăn chặn việc mở/đóng category
-                                                            deleteProduct(product.id_Product, category.id_Category);
+                                                            e.stopPropagation(); // Ngăn chặn việc mở/đóng category khi nhấn nút
+                                                            confirmDelete(product.id_Product, category.id_Category);
                                                         }}
                                                     >
                                                         ❌
@@ -139,9 +166,26 @@ const CategoryList = () => {
                                         </li>
                                     ))}
                                 </ul>
+
+                                {/* Modal xác nhận xóa */}
+                                {productToDelete && (
+                                    <div className="delete-confirm-modal">
+                                        <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
+                                        <button
+                                            onClick={() => deleteProduct(productToDelete.productId, productToDelete.categoryId)}
+                                            className="confirm-delete-button"
+                                        >
+                                            Xác nhận
+                                        </button>
+                                        <button onClick={() => setProductToDelete(null)} className="cancel-delete-button">
+                                            Hủy
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </li>
+
                 ))}
             </ul>
         </div>

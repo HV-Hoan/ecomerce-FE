@@ -1,10 +1,10 @@
 import React from "react";
+import HomeForm from "../components/HomeForm";
 
 const HomePage = () => {
     return (
         <div>
-            <h1>Trang chủ (Home)</h1>
-            <p>Chào mừng bạn đến với trang chủ!</p>
+            <HomeForm />
         </div>
     );
 };

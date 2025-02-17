@@ -26,6 +26,7 @@ function App() {
 
         {/* Layout cho Admin */}
         <Route element={<AdminLayout />}>
+          <Route path="/admin/home" element={<HomePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/category" element={<CategoryPage />} />
         </Route>

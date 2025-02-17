@@ -9,6 +9,9 @@ const AdminLayout = () => {
                 <h2 className="menu-title">Admin Menu</h2>
                 <ul className="menu-list">
                     <li>
+                        <Link to='/admin/home' className="menu-link">Home</Link>
+                    </li>
+                    <li>
                         <Link to="/admin" className="menu-link">Admin Dashboard</Link>
                     </li>
                     <li>
