@@ -9,7 +9,6 @@ const HomeForm = () => {
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
 
-
     const fetchTopRatedProducts = async () => {
         try {
             const response = await fetch("http://localhost:5000/api/top-rated-products");
@@ -28,8 +27,8 @@ const HomeForm = () => {
     const fetchProducts = async () => {
         try {
             const response = await fetch("http://localhost:5000/api/product");
-            if (!response) {
-                throw new Error("Co loi xay ra khi lay danh sach san pham");
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi lấy danh sách sản phẩm");
             }
             const data = await response.json();
             setProducts(data.list_Product || []);
@@ -38,7 +37,7 @@ const HomeForm = () => {
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         fetchTopRatedProducts();
@@ -50,7 +49,7 @@ const HomeForm = () => {
 
     return (
         <div className="home-container">
-            <h2 className="top-rated-title">Sản phẩm được đánh giá nhiều nhất</h2>
+            <h2 className="top-rated-title">Sản phẩm được đánh giá tốt nhất</h2>
             <ul className="top-rated-list">
                 {topRatedProducts.map((product) => (
                     <li key={product.id_Product} className="top-rated-item">
@@ -79,52 +78,62 @@ const HomeForm = () => {
             </ul>
 
             {/* Phần sản phẩm bên dưới */}
-            <div className="product-list">
-                {/* Danh sách sản phẩm khác có thể hiển thị ở đây */}
-                <div className="product-list-container">
-                    <h2 className="product-list-title">Danh sách sản phẩm</h2>
-                    <table className="product-list-table">
-                        <thead>
-                            <tr>
-                                <th>Tên sản phẩm</th>
-                                <th>Ảnh sản phẩm</th>
-                                <th>Mô tả</th>
-                                <th>Trạng thái</th>
-                                <th>Đánh giá</th>
-                                <th>Lượt đánh giá</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.length > 0 ? (
-                                products.map((product) => (
-                                    <tr key={product.id_Product}>
-                                        <td>{product.name_Product}</td>
-                                        <td>
-                                            {product.image_Product ? (
-                                                <img
-                                                    src={product.image_Product}
-                                                    alt={product.name_Product}
-                                                    style={{ width: 50, height: 50 }}
-                                                />
-                                            ) : (
-                                                <span>Không có ảnh</span>
-                                            )}
-                                        </td>
-                                        <td>{product.description || "Chưa có mô tả"}</td>
-                                        <td>{product.status_Product === "0" ? "Còn hàng" : "Hết hàng"}</td>
-                                        <td>{product.rating ? product.rating.toFixed(1) : "Chưa có đánh giá"}</td>
-                                        <td>{product.ratingCount ? product.ratingCount : "0 lượt đánh giá"}</td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6">Không có sản phẩm nào</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <h2 className="product-list-title">Danh sách sản phẩm</h2>
+            <ul className="product-list">
+                {products.length > 0 ? (
+                    products.map((product) => (
+                        <li key={product.id_Product} className="product-item">
+                            <div className="product-details">
+                                <img
+                                    src={product.image_Product}
+                                    alt={product.name_Product}
+                                    className="product-image"
+                                />
+                                <div className="product-info">
+                                    <p>{product.name_Product}</p>
+                                    <div className="product-form-item">
+                                        <label className="name-List">Gia tien</label>
+                                        <input
+                                            type="text"
+                                            value={product.price_Product || "Dang cap nhat"}
+                                            readOnly
+                                        />
+                                    </div>
+                                    <div className="product-form-item">
+                                        <label>Đánh giá</label>
+                                        <div className="rating-display">
+                                            {/* Hiển thị sao dựa trên rating */}
+                                            {Array.from({ length: 5 }, (_, index) => (
+                                                <span
+                                                    key={index}
+                                                    className={product.rating && product.rating >= index + 1 ? "filled-star" : "empty-star"}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
+                                            {/* Hiển thị số lượng đánh giá */}
+                                            <span className="rating-number">
+                                                ({product.rating ? product.rating.toFixed(1) : "Chưa có đánh giá"})
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="product-form-item">
+                                        <label className="name-List">Lượt đánh giá</label>
+                                        <input
+                                            type="text"
+                                            value={product.ratingCount ? product.ratingCount : "0 lượt đánh giá"}
+                                            readOnly
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    ))
+                ) : (
+                    <p>Không có sản phẩm nào</p>
+                )}
+            </ul>
         </div>
     );
 };

@@ -73,7 +73,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #e0e0e0;
     transition: background-color 0.3s;
 }
@@ -118,9 +118,7 @@
     padding: 2px 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    margin-top: -120px;
 }
-
 
 .delete-button:hover {
     background-color: #ff1a1a;
@@ -166,4 +164,27 @@
 
 .cancel-delete-button:hover {
     background-color: #e2e6ea;
+}
+
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.page-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.page-button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.page-button:hover {
+    background-color: #ddd;
 }

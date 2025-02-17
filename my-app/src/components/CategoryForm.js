@@ -10,9 +10,10 @@ const CategoryList = () => {
     const [error, setError] = useState("");
     const [role, setRole] = useState(""); // Thêm state để lưu role
     const [productToDelete, setProductToDelete] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
+    const [productsPerPage] = useState(3); // Số sản phẩm trên mỗi trang (3 sản phẩm)
 
     // Lấy danh sách category kèm theo sản phẩm
-
     const fetchCategoriesWithProducts = async () => {
         try {
             const response = await fetch("http://localhost:5000/api/category-with-products");
@@ -31,7 +32,6 @@ const CategoryList = () => {
     useEffect(() => {
         fetchCategoriesWithProducts();
     }, []);
-
 
     useEffect(() => {
         const fetchRole = async () => {
@@ -57,7 +57,6 @@ const CategoryList = () => {
             }
         });
     };
-
 
     const deleteProduct = async (productId, categoryId) => {
         try {
@@ -88,6 +87,7 @@ const CategoryList = () => {
             alert(err.message);
         }
     };
+
     const handleRating = async (productId, rating) => {
         try {
             const response = await fetch(`http://localhost:5000/api/product/${productId}/rate`, {
@@ -113,6 +113,13 @@ const CategoryList = () => {
         setProductToDelete({ productId, categoryId }); // Hiển thị modal xác nhận
     };
 
+    // Hàm phân trang sản phẩm
+    const paginate = (category) => {
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        return category.Products.slice(startIndex, endIndex);
+    };
+
     if (loading) return <p>Đang tải dữ liệu...</p>;
     if (error) return <p>Lỗi: {error}</p>;
 
@@ -120,73 +127,90 @@ const CategoryList = () => {
         <div className="category-container">
             <h1 className="category-title">Danh sách Category</h1>
             <ul className="category-list">
-                {categories.map((category) => (
-                    <li key={category.id_Category} className="category-item">
-                        <div
-                            className="category-item-header"
-                            onClick={() => toggleCategory(category.id_Category)}
-                        >
-                            <span
-                                className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
+                {categories.map((category) => {
+                    const totalPages = Math.ceil(category.Products.length / productsPerPage);
+
+                    return (
+                        <li key={category.id_Category} className="category-item">
+                            <div
+                                className="category-item-header"
+                                onClick={() => toggleCategory(category.id_Category)}
                             >
-                                ►
-                            </span>
-                            <span className="category-item-name">{category.name_Category}</span>
-                            <p className="category-description">{category.description_Category}</p>
-                        </div>
-                        {expandedCategories.includes(category.id_Category) && (
-                            <div className="category-dropdown">
-                                <ul className="product-list">
-                                    {category.Products?.map(product => (
-                                        <li key={product.id_Product} className="product-item">
-                                            <div className="product-details">
-                                                <img src={product.image_Product} alt="" className="product-image" />
-                                                <div className="product-info">
-                                                    <p>{product.name_Product}</p>
-                                                    <RatingStars
-                                                        currentRating={product.rating || 0}
-                                                        onRate={(rating) => handleRating(product.id_Product, rating)}
-                                                    />
-                                                    <span className="average-rating">
-                                                        {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
-                                                    </span>
-                                                </div>
-                                                {role === "admin" && (
-                                                    <button
-                                                        className="delete-button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation(); // Ngăn chặn việc mở/đóng category khi nhấn nút
-                                                            confirmDelete(product.id_Product, category.id_Category);
-                                                        }}
-                                                    >
-                                                        ❌
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                {/* Modal xác nhận xóa */}
-                                {productToDelete && (
-                                    <div className="delete-confirm-modal">
-                                        <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
-                                        <button
-                                            onClick={() => deleteProduct(productToDelete.productId, productToDelete.categoryId)}
-                                            className="confirm-delete-button"
-                                        >
-                                            Xác nhận
-                                        </button>
-                                        <button onClick={() => setProductToDelete(null)} className="cancel-delete-button">
-                                            Hủy
-                                        </button>
-                                    </div>
-                                )}
+                                <span
+                                    className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
+                                >
+                                    ►
+                                </span>
+                                <span className="category-item-name">{category.name_Category}</span>
+                                <p className="category-description">{category.description_Category}</p>
                             </div>
-                        )}
-                    </li>
+                            {expandedCategories.includes(category.id_Category) && (
+                                <div className="category-dropdown">
+                                    <ul className="product-list">
+                                        {paginate(category).map(product => (
+                                            <li key={product.id_Product} className="product-item">
+                                                <div className="product-details">
+                                                    <img src={product.image_Product} alt="" className="product-image" />
+                                                    <div className="product-info">
+                                                        <p>{product.name_Product}</p>
+                                                        <RatingStars
+                                                            currentRating={product.rating || 0}
+                                                            onRate={(rating) => handleRating(product.id_Product, rating)}
+                                                        />
+                                                        <span className="average-rating">
+                                                            {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
+                                                        </span>
+                                                    </div>
+                                                    {role === "admin" && (
+                                                        <button
+                                                            className="delete-button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                confirmDelete(product.id_Product, category.id_Category);
+                                                            }}
+                                                        >
+                                                            ❌
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
 
-                ))}
+                                    {/* Nút phân trang */}
+                                    <div className="pagination">
+                                        {totalPages > 1 && // Chỉ hiển thị phân trang nếu có nhiều hơn 1 trang
+                                            Array.from({ length: totalPages }, (_, index) => (
+                                                <button
+                                                    key={index + 1}
+                                                    onClick={() => setCurrentPage(index + 1)}
+                                                    className={`page-button ${currentPage === index + 1 ? "active" : ""}`}
+                                                >
+                                                    {index + 1}
+                                                </button>
+                                            ))}
+                                    </div>
+
+                                    {/* Modal xác nhận xóa */}
+                                    {productToDelete && (
+                                        <div className="delete-confirm-modal">
+                                            <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
+                                            <button
+                                                onClick={() => deleteProduct(productToDelete.productId, productToDelete.categoryId)}
+                                                className="confirm-delete-button"
+                                            >
+                                                Xác nhận
+                                            </button>
+                                            <button onClick={() => setProductToDelete(null)} className="cancel-delete-button">
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
