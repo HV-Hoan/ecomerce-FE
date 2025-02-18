@@ -12,6 +12,12 @@ const CategoryList = () => {
     const [productToDelete, setProductToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
     const [productsPerPage] = useState(3);
+    const [showAddCategoryForm, setShowAddCategoryForm] = useState(false); // Thêm state để kiểm tra hiển thị form
+    const [categoryName, setCategoryName] = useState(""); // State cho tên loại
+    const [categoryDescription, setCategoryDescription] = useState(""); // State cho mô tả loại
+    const [showEditCategoryForm, setShowEditCategoryForm] = useState(false);
+    const [categoryToEdit, setCategoryToEdit] = useState(null);
+
 
     const fetchCategoriesWithProducts = async () => {
         try {
@@ -57,6 +63,43 @@ const CategoryList = () => {
         });
     };
 
+    const handleEditCategory = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/category/${categoryToEdit.id_Category}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    name_Category: categoryName,
+                    description_Category: categoryDescription,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi cập nhật loại");
+            }
+
+            const result = await response.json();
+            alert(result.message || "Cập nhật loại thành công!");
+
+            // Cập nhật lại danh sách categories
+            fetchCategoriesWithProducts();
+
+            // Đóng form sửa category
+            setShowEditCategoryForm(false);
+            setCategoryName(""); // Reset các trường
+            setCategoryDescription("");
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
+
+
     const deleteProduct = async (productId, categoryId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/product/${productId}/${categoryId}`, {
@@ -86,6 +129,28 @@ const CategoryList = () => {
             alert(err.message);
         }
     };
+    const deleteCategory = async (categoryId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/category/${categoryId}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+            });
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi xóa loại");
+            }
+
+            const result = await response.json();
+            alert(result.message || "Xóa loại thành công");
+
+            // Cập nhật lại danh sách categories
+            setCategories((prevCategories) =>
+                prevCategories.filter((category) => category.id_Category !== categoryId)
+            );
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
 
     const handleRating = async (productId, rating) => {
         try {
@@ -111,7 +176,6 @@ const CategoryList = () => {
         setProductToDelete({ productId, categoryId });
     };
 
-
     // Hàm phân trang sản phẩm
     const paginate = (category) => {
         const startIndex = (currentPage - 1) * productsPerPage;
@@ -119,36 +183,161 @@ const CategoryList = () => {
         return category.Products.slice(startIndex, endIndex);
     };
 
+    // Hàm gửi yêu cầu thêm loại mới
+    const addCategory = async (categoryId) => {
+
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/category/${categoryId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                    name_Category: categoryName,
+                    description_Category: categoryDescription,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Có lỗi xảy ra khi thêm loại mới");
+            }
+
+            const result = await response.json();
+            alert(result.message || "Thêm loại thành công!");
+
+            // Tải lại danh sách categories
+            fetchCategoriesWithProducts();
+
+            // Đóng form thêm loại
+            setShowAddCategoryForm(false);
+            setCategoryName(""); // Reset các trường
+            setCategoryDescription("");
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     if (loading) return <p>Đang tải dữ liệu...</p>;
     if (error) return <p>Lỗi: {error}</p>;
 
     return (
         <div className="category-container">
-            <button className="add-category-button" onClick={() => alert("Thêm danh mục mới!")}>
-                Them loai
+            <h1 className="category-title">Danh sách Category</h1>
+            <button className="add-category-button" onClick={() => setShowAddCategoryForm(true)}>
+                Thêm loại
             </button>
 
+            {showAddCategoryForm && (
+                <div className="add-category-form">
+                    <h2>Thêm loại mới</h2>
+                    <form onSubmit={addCategory}>
+                        <div>
+                            <label>Tên loại:</label>
+                            <input
+                                type="text"
+                                value={categoryName}
+                                onChange={(e) => setCategoryName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>Mô tả:</label>
+                            <textarea
+                                value={categoryDescription}
+                                onChange={(e) => setCategoryDescription(e.target.value)}
+                                required
+                            ></textarea>
+                        </div>
+                        <button type="submit">Thêm loại</button>
+                        <button type="button" onClick={() => setShowAddCategoryForm(false)}>Hủy</button>
+                    </form>
+                </div>
+            )}
 
-            <h1 className="category-title">Danh sách Category</h1>
+            {/* Form Sửa loại */}
+            {showEditCategoryForm && categoryToEdit && (
+                <div className="edit-category-form">
+                    <h2>Sửa loại</h2>
+                    <form onSubmit={handleEditCategory}>
+                        <div>
+                            <label>Tên loại:</label>
+                            <input
+                                type="text"
+                                value={categoryName}
+                                onChange={(e) => setCategoryName(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>Mô tả:</label>
+                            <textarea
+                                value={categoryDescription}
+                                onChange={(e) => setCategoryDescription(e.target.value)}
+                                required
+                            ></textarea>
+                        </div>
+                        <button type="submit">Cập nhật loại</button>
+                        <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={() => setShowEditCategoryForm(false)}
+                        >
+                            Hủy
+                        </button>
+                    </form>
+                </div>
+            )}
+
             <ul className="category-list">
                 {categories.map((category) => {
                     const totalPages = Math.ceil(category.Products.length / productsPerPage);
 
                     return (
-
                         <li key={category.id_Category} className="category-item">
-                            <div
-                                className="category-item-header"
-                                onClick={() => toggleCategory(category.id_Category)}
-                            >
+
+                            <div className="category-item-header" onClick={() => toggleCategory(category.id_Category)}>
                                 <span
-                                    className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
+                                    className={`category - arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
                                 >
                                     ►
                                 </span>
                                 <span className="category-item-name">{category.name_Category}</span>
                                 <p className="category-description">{category.description_Category}</p>
+                                {/* Button Sửa */}
+                                {role === "admin" && (
+                                    <div className="category-actions">
+                                        <button
+                                            className="edit-category-button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowEditCategoryForm(true);
+                                                setCategoryToEdit(category); // Lưu category hiện tại vào state
+                                            }}
+                                        >
+                                            Sửa
+                                        </button>
+
+
+                                    </div>
+                                )}
+
+                                {role === "admin" && (
+                                    <button
+                                        className="delete-category-button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (window.confirm("Bạn có chắc chắn muốn xóa loại này không?")) {
+                                                deleteCategory(category.id_Category);
+                                            }
+                                        }}
+                                    >
+                                        Xóa
+                                    </button>
+                                )}
                             </div>
+
                             {expandedCategories.includes(category.id_Category) && (
                                 <div className="category-dropdown">
                                     <ul className="product-list">
@@ -192,7 +381,7 @@ const CategoryList = () => {
                                                 <button
                                                     key={index + 1}
                                                     onClick={() => setCurrentPage(index + 1)}
-                                                    className={`page-button ${currentPage === index + 1 ? "active" : ""}`}
+                                                    className={`page - button ${currentPage === index + 1 ? "active" : ""}`}
                                                 >
                                                     {index + 1}
                                                 </button>
