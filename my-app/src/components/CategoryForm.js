@@ -11,9 +11,8 @@ const CategoryList = () => {
     const [role, setRole] = useState(""); // Thêm state để lưu role
     const [productToDelete, setProductToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
-    const [productsPerPage] = useState(3); // Số sản phẩm trên mỗi trang (3 sản phẩm)
+    const [productsPerPage] = useState(3);
 
-    // Lấy danh sách category kèm theo sản phẩm
     const fetchCategoriesWithProducts = async () => {
         try {
             const response = await fetch("http://localhost:5000/api/category-with-products");
@@ -62,7 +61,7 @@ const CategoryList = () => {
         try {
             const response = await fetch(`http://localhost:5000/api/product/${productId}/${categoryId}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } // Gửi token nếu cần xác thực
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             });
             if (!response.ok) {
                 throw new Error("Có lỗi xảy ra khi xóa sản phẩm");
@@ -102,7 +101,6 @@ const CategoryList = () => {
 
             alert("Đánh giá thành công");
 
-            // Gọi lại danh sách category để lấy điểm trung bình mới
             fetchCategoriesWithProducts();
         } catch (err) {
             alert(err.message);
@@ -110,8 +108,9 @@ const CategoryList = () => {
     };
 
     const confirmDelete = (productId, categoryId) => {
-        setProductToDelete({ productId, categoryId }); // Hiển thị modal xác nhận
+        setProductToDelete({ productId, categoryId });
     };
+
 
     // Hàm phân trang sản phẩm
     const paginate = (category) => {
@@ -125,12 +124,18 @@ const CategoryList = () => {
 
     return (
         <div className="category-container">
+            <button className="add-category-button" onClick={() => alert("Thêm danh mục mới!")}>
+                Them loai
+            </button>
+
+
             <h1 className="category-title">Danh sách Category</h1>
             <ul className="category-list">
                 {categories.map((category) => {
                     const totalPages = Math.ceil(category.Products.length / productsPerPage);
 
                     return (
+
                         <li key={category.id_Category} className="category-item">
                             <div
                                 className="category-item-header"
@@ -153,10 +158,13 @@ const CategoryList = () => {
                                                     <img src={product.image_Product} alt="" className="product-image" />
                                                     <div className="product-info">
                                                         <p>{product.name_Product}</p>
-                                                        <RatingStars
-                                                            currentRating={product.rating || 0}
-                                                            onRate={(rating) => handleRating(product.id_Product, rating)}
-                                                        />
+                                                        {role === 'user' && (
+                                                            <RatingStars
+                                                                currentRating={product.rating || 0}
+                                                                onRate={(rating) => handleRating(product.id_Product, rating)}
+                                                            />
+                                                        )}
+
                                                         <span className="average-rating">
                                                             {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
                                                         </span>
@@ -169,7 +177,7 @@ const CategoryList = () => {
                                                                 confirmDelete(product.id_Product, category.id_Category);
                                                             }}
                                                         >
-                                                            ❌
+                                                            X
                                                         </button>
                                                     )}
                                                 </div>

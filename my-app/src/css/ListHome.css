@@ -101,7 +101,6 @@
     min-height: 80px;
 }
 
-/* Các input readonly có màu nền khác */
 .product-form-item input[readonly],
 .product-form-item textarea[readonly] {
     background-color: #f0f0f0;
@@ -109,14 +108,12 @@
     width: 180px;
 }
 
-/* Ảnh sản phẩm nhỏ trong danh sách sản phẩm */
 .product-form-item img {
     max-width: 50px;
     height: auto;
     border-radius: 4px;
 }
 
-/* Phần mô tả trạng thái sản phẩm */
 .product-form-item input[type="text"] {
     font-weight: bold;
 }
@@ -127,30 +124,4 @@
 
 .product-form-item input[type="text"][value="Hết hàng"] {
     color: red;
-}
-
-.rating-display {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    /* Giữa các sao */
-}
-
-.filled-star {
-    color: gold;
-    /* Màu vàng cho sao đã được đánh giá */
-    font-size: 18px;
-    /* Kích thước sao */
-}
-
-.empty-star {
-    color: #ccc;
-    /* Màu xám cho sao chưa được đánh giá */
-    font-size: 18px;
-    /* Kích thước sao */
-}
-
-.rating-number {
-    font-size: 14px;
-    color: #888;
 }
