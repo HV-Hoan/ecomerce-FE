@@ -125,3 +125,193 @@
 .product-form-item input[type="text"][value="Hết hàng"] {
     color: red;
 }
+
+.delete-button {
+    background-color: #e63946;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+.delete-button:hover {
+    background-color: #d62839;
+}
+
+.delete-confirm-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+
+.delete-confirm-modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+}
+
+.confirm-delete-button {
+    background-color: #e63946;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+}
+
+.confirm-delete-button:hover {
+    background-color: #d62839;
+}
+
+.confirm-delete-button,
+.cancel-delete-button {
+    background-color: #e63946;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 48%;
+    box-sizing: border-box;
+    display: inline-block;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.confirm-delete-button:hover {
+    background-color: #d62839;
+}
+
+.cancel-delete-button {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.cancel-delete-button:hover {
+    background-color: #e0e0e0;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.update-product-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.update-product-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+.update-product-modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.update-product-label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.update-product-input,
+.update-product-textarea,
+.update-product-select,
+.update-product-file-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.update-product-button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.update-product-submit-button,
+.update-product-cancel-button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.update-product-submit-button {
+    background-color: #28a745;
+    color: white;
+}
+
+.update-product-cancel-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.product-action-buttons {
+    display: flex;
+    gap: 10px;
+    /* Khoảng cách giữa hai nút */
+    margin-top: 10px;
+}
+
+.update-product-button,
+.delete-button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.update-product-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+}

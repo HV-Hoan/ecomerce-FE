@@ -6,6 +6,7 @@ import AdminPage from "./pages/AdminPage";
 import UserPage from "./pages/UserPage";
 import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
+import ProductPage from "./pages/ProductPage";
 
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -29,11 +30,12 @@ function App() {
           <Route path="/admin/home" element={<HomePage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/category" element={<CategoryPage />} />
+          <Route path="/admin/product" element={<ProductPage />} />
         </Route>
 
         {/* Layout cho User */}
         <Route element={<UserLayout />}>
-          <Route path="/home" element={<HomePage />} />
+          <Route path="/user/home" element={<HomePage />} />
           <Route path="/user" element={<UserPage />} />
           <Route path="/user/category" element={<CategoryPage />} />
         </Route>

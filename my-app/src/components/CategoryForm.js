@@ -225,9 +225,11 @@ const CategoryList = () => {
     return (
         <div className="category-container">
             <h1 className="category-title">Danh sách Category</h1>
-            <button className="add-category-button" onClick={() => setShowAddCategoryForm(true)}>
-                Thêm loại
-            </button>
+            {role === "admin" && (
+                <button className="add-category-button" onClick={() => setShowAddCategoryForm(true)}>
+                    Thêm loại
+                </button>
+            )}
 
             {showAddCategoryForm && (
                 <div className="add-category-form">

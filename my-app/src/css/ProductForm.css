@@ -1,0 +1,117 @@
+.product-form {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 20px auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-form h2 {
+    text-align: center;
+    color: #333;
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.confirm-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+}
+
+.product-form {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.product-form input,
+.product-form textarea,
+.product-form select {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.confirm-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+}
+
+.toggle-form-btn {
+    background-color: #007bff;
+    /* Màu xanh dương */
+    color: white;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-form-btn:hover {
+    background-color: #0056b3;
+    /* Màu xanh dương đậm hơn khi hover */
+}
+
+.toggle-form-btn:active {
+    background-color: #003d80;
+    /* Màu tối hơn khi nhấn */
+}
+
+.category-select {
+    width: 100%;
+    height: 150px;
+    /* Tăng chiều cao để hiển thị nhiều danh mục */
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #f8f8f8;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    overflow-y: auto;
+}
+
+.category-select:focus {
+    border-color: #007bff;
+    background-color: #ffffff;
+}
+
+.category-select option {
+    padding: 5px;
+    cursor: pointer;
+}
