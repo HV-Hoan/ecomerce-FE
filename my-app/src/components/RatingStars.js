@@ -1,13 +1,18 @@
 import React from "react";
 
-const RatingStars = ({ currentRating, onRate }) => {
+// RatingStars.js
+const RatingStars = ({ currentRating = 0, onRate }) => {
     return (
         <div>
             {[1, 2, 3, 4, 5].map((star) => (
                 <span
                     key={star}
                     style={{ cursor: "pointer", color: star <= currentRating ? "gold" : "gray" }}
-                    onClick={() => onRate(star)}
+                    onClick={() => {
+                        if (typeof onRate === "function") {
+                            onRate(star); // Truyền rating khi click vào sao
+                        }
+                    }}
                 >
                     ★
                 </span>
@@ -15,5 +20,9 @@ const RatingStars = ({ currentRating, onRate }) => {
         </div>
     );
 };
+
+
+
+
 
 export default RatingStars;

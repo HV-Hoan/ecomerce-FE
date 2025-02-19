@@ -7,6 +7,7 @@ const ProductFormList = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]); // Khai báo state cho products
+    const [votes, setVotes] = useState([]); // Khai báo state cho votes
     const [role, setRole] = useState(""); // Lưu role người dùng
     const [productToDelete, setProductToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false); // Trạng thái kiểm tra xem có đang xóa hay không
@@ -23,15 +24,13 @@ const ProductFormList = () => {
     const fetchRole = () => {
         const token = localStorage.getItem("token");
         if (token) {
-            const decodedToken = jwtDecode(token); // Giải mã token để lấy role
-            setRole(decodedToken.role); // Lưu role vào state
+            const decodedToken = jwtDecode(token);
+            setRole(decodedToken.role || "");  // Nếu không có role trong token, gán mặc định là ""
+        } else {
+            setRole("");  // Nếu không có token, đảm bảo role là rỗng
         }
     };
 
-    useEffect(() => {
-        fetchRole();
-        fetchProducts();
-    }, []);
 
     const fetchProducts = async () => {
         try {
@@ -48,8 +47,29 @@ const ProductFormList = () => {
         }
     };
 
-    const deleteProduct = async (productId) => {
 
+    const fetchVotes = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/vote");
+            const data = await response.json();
+            setVotes(data.showList || []);
+        } catch (error) {
+            console.error(error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchRole();
+        fetchProducts();
+        fetchVotes();
+    }, []);
+
+    const getAverageRatingForProduct = (productId) => {
+        const vote = votes.find((vote) => vote.id_Product === productId);
+        return vote ? vote.averageRating : 0;  // Lấy giá trị trung bình từ bảng vote
+    };
+
+    const deleteProduct = async (productId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/product/${productId}`, {
                 method: "DELETE",
@@ -86,32 +106,28 @@ const ProductFormList = () => {
             alert("Chỉ người dùng mới có thể đánh giá");
             return;
         }
-
         try {
-            const response = await fetch(`http://localhost:5000/api/product/${productId}/rate`, {
+            const response = await fetch(`http://localhost:5000/api/vote/${productId}/rate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 body: JSON.stringify({ rating }),
             });
-            const data = await response.json();
-            if (response.ok) {
-                // Cập nhật điểm đánh giá của sản phẩm
-                setProducts((prevProducts) =>
-                    prevProducts.map((product) =>
-                        product.id_Product === productId
-                            ? { ...product, rating: data.rating }
-                            : product
-                    )
-                );
-                alert("Đánh giá thành công");
-            } else {
-                alert(data.message || "Đã xảy ra lỗi khi gửi đánh giá");
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Có lỗi xảy ra khi đánh giá sản phẩm");
             }
+
+            const result = await response.json();
+            alert(`Đánh giá sản phẩm thành công! Điểm đánh giá trung bình là: ${result.averageRating}`);
+            window.location.reload();
+            fetchProducts(); // Làm mới danh sách sản phẩm sau khi đánh giá
         } catch (error) {
-            alert("Có lỗi xảy ra khi đánh giá");
+            console.error("Error rating product:", error.message);
+            alert(error.message);
         }
     };
 
@@ -168,167 +184,160 @@ const ProductFormList = () => {
         }
     };
 
-
     if (loading) return <p>Đang tải dữ liệu...</p>;
     if (error) return <p>Lỗi: {error}</p>;
 
     return (
         <ul className="product-list">
             {products.length > 0 ? (
-                products.map((product) => (
-                    <li key={product.id_Product} className="product-item">
-                        <div className="product-details">
-                            <img src={product.image_Product} alt="" className="product-image" />
-                            <div className="product-info">
-                                <p>{product.name_Product}</p>
-                                <p>{product.price_Product}</p>
-                                {role === 'user' && (
-                                    <RatingStars
-                                        currentRating={product.rating || 0}
-                                        onRate={(rating) => handleRating(product.id_Product, rating)}
-                                    />
-                                )}
-
-                                <span className="average-rating">
-                                    {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
-                                </span>
-                            </div>
-                            <div className="product-action-buttons">
-                                {role === "admin" && (
-                                    <button
-                                        className="update-product-button"
-                                        onClick={() => handleOpenUpdateModal(product)}
-                                    >
-                                        ⏫
-                                    </button>
-                                )}
-
-
-                                {role === "admin" && (
-                                    <button
-                                        className="delete-button"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            confirmDelete(product.id_Product);  // Đảm bảo productId được truyền
-                                        }}
-                                    >
-                                        x
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Modal xác nhận xóa */}
-                        {productToDelete === product.id_Product && (
-                            <div className="delete-confirm-modal-backdrop">
-                                <div className="delete-confirm-modal">
-                                    <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
-                                    <div className="button-container">
+                products.map((product) => {
+                    const averageRating = getAverageRatingForProduct(product.id_Product); // Lấy trung bình điểm
+                    return (
+                        <li key={product.id_Product} className="product-item">
+                            <div className="product-details">
+                                <img src={product.image_Product} alt="" className="product-image" />
+                                <div className="product-info">
+                                    <p>{product.name_Product}</p>
+                                    <p>{product.price_Product}</p>
+                                    {role === 'user' && (
+                                        <RatingStars
+                                            currentRating={averageRating}
+                                            onRate={(rating) => handleRating(product.id_Product, rating)}
+                                        />
+                                    )}
+                                </div>
+                                <div className="product-action-buttons">
+                                    {role === "admin" && (
                                         <button
-                                            onClick={() => deleteProduct(product.id_Product)}
-                                            className="confirm-delete-button"
-                                            disabled={isDeleting}
+                                            className="update-product-button"
+                                            onClick={() => handleOpenUpdateModal(product)}
                                         >
-                                            Xác nhận
+                                            ⏫
                                         </button>
+                                    )}
+
+                                    {role === "admin" && (
                                         <button
-                                            onClick={() => setProductToDelete(null)}
-                                            className="cancel-delete-button"
+                                            className="delete-button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                confirmDelete(product.id_Product); // Đảm bảo productId được truyền
+                                            }}
                                         >
-                                            Hủy
+                                            x
                                         </button>
-                                    </div>
+                                    )}
                                 </div>
                             </div>
-                        )}
 
-                        {/* Modal cập nhật sản phẩm */}
-                        {productToUpdate && (
-                            <div className="update-product-modal-backdrop">
-                                <div className="update-product-modal">
-                                    <h3 className="update-product-modal-title">Cập nhật thông tin sản phẩm</h3>
-                                    <form className="update-product-form">
-                                        <label className="update-product-label">
-                                            Tên sản phẩm:
-                                            <input
-                                                type="text"
-                                                name="name_Product"
-                                                className="update-product-input"
-                                                value={updateData.name_Product}
-                                                onChange={handleUpdateChange}
-                                            />
-                                        </label>
-                                        <label className="update-product-label">
-                                            Giá sản phẩm:
-                                            <input
-                                                type="number"
-                                                name="price_Product"
-                                                className="update-product-input"
-                                                value={updateData.price_Product}
-                                                onChange={handleUpdateChange}
-                                            />
-                                        </label>
-                                        <label className="update-product-label">
-                                            Mô tả:
-                                            <textarea
-                                                name="description"
-                                                className="update-product-textarea"
-                                                value={updateData.description}
-                                                onChange={handleUpdateChange}
-                                            />
-                                        </label>
-                                        <label className="update-product-label">
-                                            Trạng thái sản phẩm:
-                                            <select
-                                                name="status_Product"
-                                                className="update-product-select"
-                                                value={updateData.status_Product}
-                                                onChange={handleUpdateChange}
-                                            >
-                                                <option value="available">Còn hàng</option>
-                                                <option value="out_of_stock">Hết hàng</option>
-                                            </select>
-                                        </label>
-                                        <label className="update-product-label">
-                                            Hình ảnh:
-                                            <input
-                                                type="file"
-                                                name="image_Product"
-                                                className="update-product-file-input"
-                                                accept="image/*"
-                                                onChange={handleUpdateChange}
-                                            />
-                                        </label>
-                                        <div className="update-product-button-container">
+                            {/* Modal xác nhận xóa */}
+                            {productToDelete === product.id_Product && (
+                                <div className="delete-confirm-modal-backdrop">
+                                    <div className="delete-confirm-modal">
+                                        <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
+                                        <div className="button-container">
                                             <button
-                                                type="button"
-                                                className="update-product-submit-button"
-                                                onClick={updateProduct}
+                                                onClick={() => deleteProduct(product.id_Product)}
+                                                className="confirm-delete-button"
+                                                disabled={isDeleting}
                                             >
-                                                Cập nhật
+                                                Xác nhận
                                             </button>
                                             <button
-                                                type="button"
-                                                className="update-product-cancel-button"
-                                                onClick={() => setProductToUpdate(null)}
+                                                onClick={() => setProductToDelete(null)}
+                                                className="cancel-delete-button"
                                             >
                                                 Hủy
                                             </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-
-
-
-                    </li>
-                ))
+                            {/* Modal cập nhật sản phẩm */}
+                            {productToUpdate && (
+                                <div className="update-product-modal-backdrop">
+                                    <div className="update-product-modal">
+                                        <h3 className="update-product-modal-title">Cập nhật thông tin sản phẩm</h3>
+                                        <form className="update-product-form">
+                                            <label className="update-product-label">
+                                                Tên sản phẩm:
+                                                <input
+                                                    type="text"
+                                                    name="name_Product"
+                                                    className="update-product-input"
+                                                    value={updateData.name_Product}
+                                                    onChange={handleUpdateChange}
+                                                />
+                                            </label>
+                                            <label className="update-product-label">
+                                                Giá sản phẩm:
+                                                <input
+                                                    type="number"
+                                                    name="price_Product"
+                                                    className="update-product-input"
+                                                    value={updateData.price_Product}
+                                                    onChange={handleUpdateChange}
+                                                />
+                                            </label>
+                                            <label className="update-product-label">
+                                                Mô tả:
+                                                <textarea
+                                                    name="description"
+                                                    className="update-product-textarea"
+                                                    value={updateData.description}
+                                                    onChange={handleUpdateChange}
+                                                />
+                                            </label>
+                                            <label className="update-product-label">
+                                                Trạng thái sản phẩm:
+                                                <select
+                                                    name="status_Product"
+                                                    className="update-product-select"
+                                                    value={updateData.status_Product}
+                                                    onChange={handleUpdateChange}
+                                                >
+                                                    <option value="available">Còn hàng</option>
+                                                    <option value="out_of_stock">Hết hàng</option>
+                                                </select>
+                                            </label>
+                                            <label className="update-product-label">
+                                                Hình ảnh:
+                                                <input
+                                                    type="file"
+                                                    name="image_Product"
+                                                    className="update-product-file-input"
+                                                    accept="image/*"
+                                                    onChange={handleUpdateChange}
+                                                />
+                                            </label>
+                                            <div className="update-product-button-container">
+                                                <button
+                                                    type="button"
+                                                    className="update-product-submit-button"
+                                                    onClick={updateProduct}
+                                                >
+                                                    Cập nhật
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="update-product-cancel-button"
+                                                    onClick={() => setProductToUpdate(null)}
+                                                >
+                                                    Hủy
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </li>
+                    );
+                })
             ) : (
                 <p>Không có sản phẩm nào</p>
             )}
-        </ul >
+        </ul>
     );
 };
 
