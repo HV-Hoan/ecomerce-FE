@@ -23,7 +23,6 @@ const HomeForm = () => {
         }
     };
 
-
     useEffect(() => {
         fetchTopRatedProducts();
     }, []);
@@ -46,8 +45,8 @@ const HomeForm = () => {
                             <div className="product-info">
                                 <p>{product.name_Product}</p>
                                 <span className="average-rating">
-                                    {product.rating
-                                        ? `Đánh giá: ${product.rating.toFixed(1)}`
+                                    {product.averageRating
+                                        ? `Đánh giá trung bình: ${product.averageRating.toFixed(1)}`
                                         : "Chưa có đánh giá"}
                                 </span>
                                 <span className="rating-count">
@@ -63,7 +62,7 @@ const HomeForm = () => {
 
             <h2 className="product-list-title">Danh sách sản phẩm</h2>
             <div>
-                <ProductFormList />;
+                <ProductFormList />
             </div>
         </div>
     );

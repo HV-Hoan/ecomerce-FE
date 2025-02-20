@@ -83,8 +83,6 @@ const ProductFormList = () => {
             const result = await response.json();
             alert(result.message || "Xóa sản phẩm thành công");
 
-            // Reload lại danh sách sản phẩm sau khi xóa
-            fetchProducts();
             window.location.reload();
 
             // Reset trạng thái productToDelete và isDeleting
@@ -124,7 +122,7 @@ const ProductFormList = () => {
             const result = await response.json();
             alert(`Đánh giá sản phẩm thành công! Điểm đánh giá trung bình là: ${result.averageRating}`);
             window.location.reload();
-            fetchProducts(); // Làm mới danh sách sản phẩm sau khi đánh giá
+            fetchProducts();
         } catch (error) {
             console.error("Error rating product:", error.message);
             alert(error.message);
