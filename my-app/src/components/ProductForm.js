@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Sửa lại import cho jwtDecode
+import { useNavigate } from "react-router-dom";
 import RatingStars from "./RatingStars";
 import "../css/ListHome.css";
 
 const ProductFormList = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [products, setProducts] = useState([]); // Khai báo state cho products
-    const [votes, setVotes] = useState([]); // Khai báo state cho votes
-    const [role, setRole] = useState(""); // Lưu role người dùng
+    const [products, setProducts] = useState([]);
+    const [votes, setVotes] = useState([]);
+    const [role, setRole] = useState("");
     const [productToDelete, setProductToDelete] = useState(null);
-    const [isDeleting, setIsDeleting] = useState(false); // Trạng thái kiểm tra xem có đang xóa hay không
-    const [productToUpdate, setProductToUpdate] = useState(null); // Khai báo state để lưu ID sản phẩm cần chỉnh sửa
-
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [productToUpdate, setProductToUpdate] = useState(null);
     const [updateData, setUpdateData] = useState({
         name_Product: "",
         price_Product: "",
@@ -21,16 +21,21 @@ const ProductFormList = () => {
         image_Product: null,
     });
 
+    const navigate = useNavigate();
+
+    const handleProductClick = (productId) => {
+        navigate(`/product/${productId}`);
+    };
+
     const fetchRole = () => {
         const token = localStorage.getItem("token");
         if (token) {
             const decodedToken = jwtDecode(token);
-            setRole(decodedToken.role || "");  // Nếu không có role trong token, gán mặc định là ""
+            setRole(decodedToken.role || "");
         } else {
-            setRole("");  // Nếu không có token, đảm bảo role là rỗng
+            setRole("");
         }
     };
-
 
     const fetchProducts = async () => {
         try {
@@ -46,7 +51,6 @@ const ProductFormList = () => {
             setLoading(false);
         }
     };
-
 
     const fetchVotes = async () => {
         try {
@@ -66,14 +70,14 @@ const ProductFormList = () => {
 
     const getAverageRatingForProduct = (productId) => {
         const vote = votes.find((vote) => vote.id_Product === productId);
-        return vote ? vote.averageRating : 0;  // Lấy giá trị trung bình từ bảng vote
+        return vote ? vote.averageRating : 0;
     };
 
     const deleteProduct = async (productId) => {
         try {
             const response = await fetch(`http://localhost:5000/api/product/${productId}`, {
                 method: "DELETE",
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
 
             if (!response.ok) {
@@ -83,19 +87,16 @@ const ProductFormList = () => {
             const result = await response.json();
             alert(result.message || "Xóa sản phẩm thành công");
 
-            window.location.reload();
-
-            // Reset trạng thái productToDelete và isDeleting
-            setProductToDelete(null);  // Đảm bảo reset lại trạng thái productToDelete
+            setProductToDelete(null);
+            fetchProducts();
         } catch (err) {
             alert(err.message);
         } finally {
-            setIsDeleting(false); // Đảm bảo trạng thái isDeleting được reset sau khi hoàn thành
+            setIsDeleting(false);
         }
     };
 
     const confirmDelete = (productId) => {
-        // Đặt trạng thái productToDelete ngay khi người dùng nhấn nút xác nhận xóa
         setProductToDelete(productId);
     };
 
@@ -121,14 +122,12 @@ const ProductFormList = () => {
 
             const result = await response.json();
             alert(`Đánh giá sản phẩm thành công! Điểm đánh giá trung bình là: ${result.averageRating}`);
-            window.location.reload();
             fetchProducts();
         } catch (error) {
             console.error("Error rating product:", error.message);
             alert(error.message);
         }
     };
-
 
     const handleOpenUpdateModal = (product) => {
         setProductToUpdate(product.id_Product);
@@ -169,13 +168,12 @@ const ProductFormList = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Error response:", errorData);
                 throw new Error(errorData.message || "Có lỗi xảy ra khi cập nhật sản phẩm");
             }
 
             alert("Cập nhật sản phẩm thành công");
             setProductToUpdate(null);
-            fetchProducts(); // Reload danh sách sản phẩm sau khi cập nhật
+            fetchProducts();
         } catch (error) {
             console.error("Error updating product:", error.message);
             alert(error.message);
@@ -192,11 +190,18 @@ const ProductFormList = () => {
                     const averageRating = getAverageRatingForProduct(product.id_Product); // Lấy trung bình điểm
                     return (
                         <li key={product.id_Product} className="product-item">
+
                             <div className="product-details">
-                                <img src={product.image_Product} alt="" className="product-image" />
+                                <img
+                                    src={product.image_Product}
+                                    alt=""
+                                    className="product-image"
+                                    onClick={() => handleProductClick(product.id_Product)}
+                                />
                                 <div className="product-info">
                                     <p>{product.name_Product}</p>
                                     <p>{product.price_Product}</p>
+
                                     {role === 'user' && (
                                         <RatingStars
                                             currentRating={averageRating}
@@ -208,7 +213,10 @@ const ProductFormList = () => {
                                     {role === "admin" && (
                                         <button
                                             className="update-product-button"
-                                            onClick={() => handleOpenUpdateModal(product)}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Ngăn sự kiện click vào nút cập nhật
+                                                handleOpenUpdateModal(product);
+                                            }}
                                         >
                                             ⏫
                                         </button>
@@ -218,8 +226,8 @@ const ProductFormList = () => {
                                         <button
                                             className="delete-button"
                                             onClick={(e) => {
-                                                e.stopPropagation();
-                                                confirmDelete(product.id_Product); // Đảm bảo productId được truyền
+                                                e.stopPropagation(); // Ngăn sự kiện click vào nút xóa
+                                                confirmDelete(product.id_Product);
                                             }}
                                         >
                                             x
@@ -231,7 +239,10 @@ const ProductFormList = () => {
                             {/* Modal xác nhận xóa */}
                             {productToDelete === product.id_Product && (
                                 <div className="delete-confirm-modal-backdrop">
-                                    <div className="delete-confirm-modal">
+                                    <div
+                                        className="delete-confirm-modal"
+                                        onClick={(e) => e.stopPropagation()} // Ngăn click modal gây sự kiện click vào li
+                                    >
                                         <p>Bạn có chắc chắn muốn xóa sản phẩm này không?</p>
                                         <div className="button-container">
                                             <button
@@ -249,6 +260,7 @@ const ProductFormList = () => {
                                             </button>
                                         </div>
                                     </div>
+
                                 </div>
                             )}
 
@@ -295,10 +307,11 @@ const ProductFormList = () => {
                                                     value={updateData.status_Product}
                                                     onChange={handleUpdateChange}
                                                 >
-                                                    <option value="available">Còn hàng</option>
-                                                    <option value="out_of_stock">Hết hàng</option>
+                                                    <option value="0">Còn hàng</option>
+                                                    <option value="1">Hết hàng</option>
                                                 </select>
                                             </label>
+
                                             <label className="update-product-label">
                                                 Hình ảnh:
                                                 <input

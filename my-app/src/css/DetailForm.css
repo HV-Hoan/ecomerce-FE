@@ -1,0 +1,133 @@
+.detail-content {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.detail-image {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.detail-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #d9534f;
+}
+
+.detail-container {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-section {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.product-image-detail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+.product-info h1 {
+    font-size: 40px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    margin-top: 0;
+    /* Đảm bảo không có khoảng cách trên */
+}
+
+.product-info p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.product-details-form {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.product-detail-item {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 12px;
+    /* Khoảng cách giữa các dòng */
+}
+
+.detail-label {
+    font-weight: bold;
+    width: 120px;
+    /* Đảm bảo tất cả nhãn có độ rộng cố định để thẳng hàng */
+    text-align: left;
+    color: #333;
+}
+
+.detail-value {
+    color: #555;
+    text-align: left;
+}
+
+.product-details-form p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 12px;
+    /* Tăng khoảng cách giữa các dòng */
+}
+
+
+
+
+.product-section {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    gap: 40px;
+    /* Tạo khoảng cách 40px giữa ảnh và thông tin */
+}
+
+.product-image-detail {
+    width: 800px;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 10px 20px;
+}
