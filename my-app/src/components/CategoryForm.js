@@ -183,12 +183,10 @@ const CategoryList = () => {
         return category.Products.slice(startIndex, endIndex);
     };
 
-    // Hàm gửi yêu cầu thêm loại mới
-    const addCategory = async (categoryId) => {
-
-
+    const addCategory = async (e) => {
+        e.preventDefault(); // Ngăn trang reload khi submit
         try {
-            const response = await fetch(`http://localhost:5000/api/category/${categoryId}`, {
+            const response = await fetch(`http://localhost:5000/api/category`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -200,24 +198,23 @@ const CategoryList = () => {
                 }),
             });
 
+            const result = await response.json();
             if (!response.ok) {
-                throw new Error("Có lỗi xảy ra khi thêm loại mới");
+                throw new Error(result.message || "Có lỗi xảy ra khi thêm loại mới");
             }
 
-            const result = await response.json();
             alert(result.message || "Thêm loại thành công!");
-
-            // Tải lại danh sách categories
-            fetchCategoriesWithProducts();
-
-            // Đóng form thêm loại
             setShowAddCategoryForm(false);
-            setCategoryName(""); // Reset các trường
+            setCategoryName("");
             setCategoryDescription("");
+            fetchCategoriesWithProducts(); // Cập nhật danh sách sau khi thêm
         } catch (error) {
+            console.error("Lỗi thêm category:", error);
             alert(error.message);
         }
     };
+
+
 
     if (loading) return <p>Đang tải dữ liệu...</p>;
     if (error) return <p>Lỗi: {error}</p>;
@@ -301,7 +298,7 @@ const CategoryList = () => {
 
                             <div className="category-item-header" onClick={() => toggleCategory(category.id_Category)}>
                                 <span
-                                    className={`category - arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
+                                    className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
                                 >
                                     ►
                                 </span>
@@ -383,7 +380,7 @@ const CategoryList = () => {
                                                 <button
                                                     key={index + 1}
                                                     onClick={() => setCurrentPage(index + 1)}
-                                                    className={`page - button ${currentPage === index + 1 ? "active" : ""}`}
+                                                    className={`page-button ${currentPage === index + 1 ? "active" : ""}`}
                                                 >
                                                     {index + 1}
                                                 </button>
