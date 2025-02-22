@@ -13,8 +13,8 @@ const CategoryList = () => {
     const [currentPage, setCurrentPage] = useState(1); // Trạng thái trang hiện tại
     const [productsPerPage] = useState(3);
     const [showAddCategoryForm, setShowAddCategoryForm] = useState(false); // Thêm state để kiểm tra hiển thị form
-    const [categoryName, setCategoryName] = useState(""); // State cho tên loại
-    const [categoryDescription, setCategoryDescription] = useState(""); // State cho mô tả loại
+    const [categoryName, setCategoryName] = useState("");
+    const [categoryDescription, setCategoryDescription] = useState("");
     const [showEditCategoryForm, setShowEditCategoryForm] = useState(false);
     const [categoryToEdit, setCategoryToEdit] = useState(null);
 

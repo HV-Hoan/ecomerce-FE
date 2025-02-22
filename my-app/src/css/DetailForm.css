@@ -1,8 +1,12 @@
-.detail-content {
-    display: flex;
-    gap: 20px;
-    width: 100%;
+.detail-container {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    max-height: 100vh;
 }
+
 
 .detail-image {
     width: 300px;
@@ -130,4 +134,11 @@
     flex-direction: column;
     justify-content: flex-start;
     padding: 10px 20px;
+}
+
+.button-add-cart {
+    margin-top: 250px;
+    padding: 10px 15px;
+    background-color: red;
+    color: white;
 }

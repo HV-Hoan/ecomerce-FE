@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "../css/DetailForm.css";
+import CommentForm from "./CommentForm";
 
 const ShowDetail = () => {
     const { id_Product } = useParams();
@@ -29,39 +30,30 @@ const ShowDetail = () => {
 
     return (
         <div className="detail-container">
-            <div className="product-section">
-                <div className="product-image-detail">
-                    <img src={product.image_Product} alt={product.name_Product} />
+            {product && (
+                <div className="product-section">
+                    <div className="product-image-detail">
+                        <img src={product.image_Product} alt={product.name_Product} />
+                    </div>
+                    <div className="product-info">
+                        <h1>{product.name_Product}</h1>
+                        <p>{product.description}</p>
+                        <p>Giá: {product.price_Product} VND</p>
+                        <button className="button-add-cart">Thêm vào giỏ hàng</button>
+                    </div>
                 </div>
 
+            )}
 
-                <div className="product-info">
-                    <h1>{product.name_Product}</h1>
-                    <form className="product-details-form">
-                        <div className="product-detail-item">
-                            <span className="detail-label">Mô tả:</span>
-                            <span className="detail-value">{product.description}</span>
-                        </div>
-                        <div className="product-detail-item">
-                            <span className="detail-label">Giá:</span>
-                            <span className="detail-value">{product.price_Product} VND</span>
-                        </div>
-                        <div className="product-detail-item">
-                            <span className="detail-label">Trạng thái:</span>
-                            <span className="detail-value">{product.status_Product === "0" ? "Còn hàng" : "Hết hàng"}</span>
-                        </div>
-                    </form>
-
-                </div>
-
-
-
-            </div>
             <div className="additional-section">
-                {/* Nội dung khác sẽ được đặt ở đây */}
+                <h1>Nội dung phản hồi</h1>
             </div>
+            <CommentForm id_Product={id_Product} />
         </div>
     );
+
+
+
 };
 
 export default ShowDetail;
