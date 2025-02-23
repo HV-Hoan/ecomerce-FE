@@ -122,6 +122,7 @@ const ProductFormList = () => {
 
             const result = await response.json();
             alert(`Đánh giá sản phẩm thành công! Điểm đánh giá trung bình là: ${result.averageRating}`);
+            window.location.reload();
             fetchProducts();
         } catch (error) {
             console.error("Error rating product:", error.message);

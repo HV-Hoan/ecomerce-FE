@@ -1,6 +1,5 @@
 import React from "react";
 
-// RatingStars.js
 const RatingStars = ({ currentRating = 0, onRate }) => {
     return (
         <div>

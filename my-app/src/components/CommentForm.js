@@ -76,6 +76,7 @@ const CommentForm = ({ id_Product }) => {
             const result = await response.json();
             setComments([result.comment, ...comments]);
             setComment("");
+            window.location.reload();
         } catch (error) {
             console.error("Lỗi:", error.message);
         } finally {
