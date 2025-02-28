@@ -12,10 +12,13 @@ const UserLayout = () => {
                         <Link to="/user/home" className="menu-link">Home</Link>
                     </li>
                     <li>
-                        <Link to="/user" className="menu-link">Thông tin User </Link>
+                        <Link to="/user/in4" className="menu-link">Thông tin User </Link>
                     </li>
                     <li>
                         <Link to="/user/category" className="menu-link">Loại sản phẩm</Link>
+                    </li>
+                    <li>
+                        <Link to="/user/cart" className="menu-link">Giỏ hàng của bạn</Link>
                     </li>
                 </ul>
             </nav>

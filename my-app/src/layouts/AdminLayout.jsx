@@ -12,7 +12,7 @@ const AdminLayout = () => {
                         <Link to='/admin/home' className="menu-link">Home</Link>
                     </li>
                     <li>
-                        <Link to="/admin" className="menu-link">Thông tin Admin</Link>
+                        <Link to="/admin/in4" className="menu-link">Thông tin Admin</Link>
                     </li>
                     <li>
                         <Link to="/admin/category" className="menu-link"> Quản lý loại sản phẩm</Link>
