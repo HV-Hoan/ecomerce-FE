@@ -34,30 +34,32 @@ const HomeForm = () => {
         <div className="home-container">
             <h2 className="top-rated-title">Sản phẩm được đánh giá tốt nhất</h2>
             <ul className="top-rated-list">
-                {topRatedProducts.map((product) => (
-                    <li key={product.id_Product} className="top-rated-item">
-                        <div className="product-details">
-                            <img
-                                src={product.image_Product}
-                                alt={product.name_Product}
-                                className="product-image"
-                            />
-                            <div className="product-info">
-                                <p>{product.name_Product}</p>
-                                <span className="average-rating">
-                                    {product.averageRating
-                                        ? `Đánh giá trung bình: ${product.averageRating.toFixed(1)}`
-                                        : "Chưa có đánh giá"}
-                                </span>
-                                <span className="rating-count">
-                                    {product.ratingCount
-                                        ? `${product.ratingCount} lượt đánh giá`
-                                        : "0 lượt đánh giá"}
-                                </span>
-                            </div>
-                        </div>
-                    </li>
-                ))}
+                {topRatedProducts.length > 0 ? (
+                    topRatedProducts.map((product) => {
+                        const imageSrc = product.image_Product || "/images/default-product.jpg"; // Ảnh mặc định nếu không có ảnh
+                        const averageRating = product.averageRating ? parseFloat(product.averageRating).toFixed(1) : "Chưa có";
+                        const ratingCount = product.ratingCount || 0;
+
+                        return (
+                            <li key={product.id} className="top-rated-item">
+                                <div className="product-details">
+                                    <img
+                                        src={imageSrc}
+                                        alt={product.name_Product}
+                                        className="product-image"
+                                    />
+                                    <div className="product-info">
+                                        <p className="product-name">{product.name_Product}</p>
+                                        <span className="average-rating">⭐ {averageRating}</span>
+                                        <span className="rating-count">({ratingCount} lượt đánh giá)</span>
+                                    </div>
+                                </div>
+                            </li>
+                        );
+                    })
+                ) : (
+                    <p className="no-products">Không có sản phẩm nào được đánh giá.</p>
+                )}
             </ul>
 
             <h2 className="product-list-title">Danh sách sản phẩm</h2>

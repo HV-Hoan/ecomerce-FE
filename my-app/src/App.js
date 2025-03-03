@@ -28,7 +28,7 @@ function App() {
           <Route path="/" element={<LoginForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
-          <Route path="/product/:id_Product" element={<ShowDetail />} />
+          <Route path="/product/:productId" element={<ShowDetail />} />
           <Route path="/confirm" element={<OrderForm />} />
         </Route>
 

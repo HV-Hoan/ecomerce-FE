@@ -69,7 +69,7 @@ const ProductFormList = () => {
     }, []);
 
     const getAverageRatingForProduct = (productId) => {
-        const vote = votes.find((vote) => vote.id_Product === productId);
+        const vote = votes.find((vote) => vote.productId === productId);
         return vote ? vote.averageRating : 0;
     };
 
@@ -131,7 +131,7 @@ const ProductFormList = () => {
     };
 
     const handleOpenUpdateModal = (product) => {
-        setProductToUpdate(product.id_Product);
+        setProductToUpdate(product.id);
         setUpdateData({
             name_Product: product.name_Product,
             price_Product: product.price_Product,
@@ -188,25 +188,25 @@ const ProductFormList = () => {
         <ul className="product-list">
             {products.length > 0 ? (
                 products.map((product) => {
-                    const averageRating = getAverageRatingForProduct(product.id_Product); // Lấy trung bình điểm
+                    const averageRating = getAverageRatingForProduct(product.id); // Lấy trung bình điểm
                     return (
-                        <li key={product.id_Product} className="product-item">
+                        <li key={product.id} className="product-item">
 
                             <div className="product-details">
                                 <img
                                     src={product.image_Product}
                                     alt=""
                                     className="product-image"
-                                    onClick={() => handleProductClick(product.id_Product)}
+                                    onClick={() => handleProductClick(product.id)}
                                 />
                                 <div className="product-info">
                                     <p>{product.name_Product}</p>
-                                    <p>{product.price_Product}</p>
+                                    <p>{product.price_Product} VND</p>
 
                                     {role === 'user' && (
                                         <RatingStars
                                             currentRating={averageRating}
-                                            onRate={(rating) => handleRating(product.id_Product, rating)}
+                                            onRate={(rating) => handleRating(product.id, rating)}
                                         />
                                     )}
                                 </div>

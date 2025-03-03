@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import "../css/CommentForm.css";
 
-const CommentForm = ({ id_Product }) => {
+const CommentForm = ({ productId }) => {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -25,12 +25,12 @@ const CommentForm = ({ id_Product }) => {
 
 
     useEffect(() => {
-        if (!id_Product) return;
-        fetch(`http://localhost:5000/api/comment/${id_Product}`)
+        if (!productId) return;
+        fetch(`http://localhost:5000/api/comment/${productId}`)
             .then((res) => res.json())
             .then((data) => setComments(data.comments || []))
             .catch((err) => console.error("Lỗi khi tải bình luận:", err));
-    }, [id_Product]);
+    }, [productId]);
 
 
     const handleSubmit = async (e) => {
@@ -60,7 +60,7 @@ const CommentForm = ({ id_Product }) => {
 
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:5000/api/comment/${id_Product}`, {
+            const response = await fetch(`http://localhost:5000/api/comment/${productId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -95,14 +95,14 @@ const CommentForm = ({ id_Product }) => {
                     value={comment}
                     onChange={(e) => {
                         setComment(e.target.value);
-                        setError(""); // ✅ Xóa lỗi khi người dùng bắt đầu nhập
+                        setError("");
                     }}
                     placeholder="Nhập bình luận..."
                     className="comment-input"
                     disabled={loading}
                 ></textarea>
 
-                {error && <p className="error-message">{error}</p>} {/* ✅ Hiển thị lỗi */}
+                {error && <p className="error-message">{error}</p>}
 
                 <button type="submit" className="comment-button" disabled={loading}>
                     {loading ? "Đang gửi..." : "Gửi"}

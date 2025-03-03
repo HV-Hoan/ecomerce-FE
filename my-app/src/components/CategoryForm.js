@@ -26,13 +26,28 @@ const CategoryList = () => {
                 throw new Error("Có lỗi xảy ra khi lấy danh sách");
             }
             const data = await response.json();
-            setCategories(data.list_Category);
+
+            // Gọi API để lấy rating của từng sản phẩm
+            const categoriesWithRatings = await Promise.all(
+                data.list_Category.map(async (category) => {
+                    const productsWithRatings = await Promise.all(
+                        category.Products.map(async (product) => {
+                            const rating = await fetchVoteForProduct(product.id);
+                            return { ...product, rating };
+                        })
+                    );
+                    return { ...category, Products: productsWithRatings };
+                })
+            );
+
+            setCategories(categoriesWithRatings);
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchCategoriesWithProducts();
@@ -116,10 +131,10 @@ const CategoryList = () => {
             // cập nhật lại danh sách sản phẩm sau khi xóa
             setCategories(prevCategories =>
                 prevCategories.map(category =>
-                    category.id_Category === categoryId
+                    category.id === categoryId
                         ? {
                             ...category,
-                            Products: category.Products.filter(product => product.id_Product !== productId)
+                            Products: category.Products.filter(product => product.id !== productId)
                         }
                         : category
                 )
@@ -144,17 +159,30 @@ const CategoryList = () => {
 
             // Cập nhật lại danh sách categories
             setCategories((prevCategories) =>
-                prevCategories.filter((category) => category.id_Category !== categoryId)
+                prevCategories.filter((category) => category.id !== categoryId)
             );
         } catch (err) {
             alert(err.message);
+        }
+    };
+    const fetchVoteForProduct = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/vote/${productId}`);
+            if (!response.ok) {
+                throw new Error("Lỗi khi lấy đánh giá sản phẩm");
+            }
+            const data = await response.json();
+            return data.averageRating;
+        } catch (error) {
+            console.error("Lỗi lấy đánh giá:", error);
+            return 0;
         }
     };
 
 
     const handleRating = async (productId, rating) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/product/${productId}/rate`, {
+            const response = await fetch(`http://localhost:5000/api/vote/${productId}/rate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ rating }),
@@ -294,11 +322,11 @@ const CategoryList = () => {
                     const totalPages = Math.ceil(category.Products.length / productsPerPage);
 
                     return (
-                        <li key={category.id_Category} className="category-item">
+                        <li key={category.id} className="category-item">
 
-                            <div className="category-item-header" onClick={() => toggleCategory(category.id_Category)}>
+                            <div className="category-item-header" onClick={() => toggleCategory(category.id)}>
                                 <span
-                                    className={`category-arrow ${expandedCategories.includes(category.id_Category) ? "expanded" : ""}`}
+                                    className={`category-arrow ${expandedCategories.includes(category.id) ? "expanded" : ""}`}
                                 >
                                     ►
                                 </span>
@@ -328,7 +356,7 @@ const CategoryList = () => {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             if (window.confirm("Bạn có chắc chắn muốn xóa loại này không?")) {
-                                                deleteCategory(category.id_Category);
+                                                deleteCategory(category.id);
                                             }
                                         }}
                                     >
@@ -337,21 +365,25 @@ const CategoryList = () => {
                                 )}
                             </div>
 
-                            {expandedCategories.includes(category.id_Category) && (
+                            {expandedCategories.includes(category.id) && (
                                 <div className="category-dropdown">
                                     <ul className="product-list">
                                         {paginate(category).map(product => (
-                                            <li key={product.id_Product} className="product-item">
+                                            <li key={product.id} className="product-item">
                                                 <div className="product-details">
                                                     <img src={product.image_Product} alt="" className="product-image" />
                                                     <div className="product-info">
                                                         <p>{product.name_Product}</p>
                                                         {role === 'user' && (
-                                                            <RatingStars
-                                                                currentRating={product.rating || 0}
-                                                                onRate={(rating) => handleRating(product.id_Product, rating)}
-                                                            />
+                                                            <div className="rating-container">
+                                                                <RatingStars
+                                                                    currentRating={product.rating} // Nhận rating từ API
+                                                                    onRate={(rating) => handleRating(product.id, rating)}
+                                                                />
+
+                                                            </div>
                                                         )}
+
 
                                                         <span className="average-rating">
                                                             {product.rating ? `(${product.rating.toFixed(1)})` : "(0.0)"}
@@ -362,7 +394,7 @@ const CategoryList = () => {
                                                             className="delete-button"
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
-                                                                confirmDelete(product.id_Product, category.id_Category);
+                                                                confirmDelete(product.id, category.id);
                                                             }}
                                                         >
                                                             X

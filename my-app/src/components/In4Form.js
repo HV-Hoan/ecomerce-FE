@@ -84,7 +84,6 @@ const UserProfile = () => {
                         <p><strong>Full Name:</strong> {user.fullname || "N/A"}</p>
                         <p><strong>Email:</strong> {user.email}</p>
                         <p><strong>Address:</strong> {user.address}</p>
-                        <p><strong>Role:</strong> {user.userRole}</p>
                         <button className="edit-btn" onClick={handleEdit}>Edit</button>
                     </>
                 )}

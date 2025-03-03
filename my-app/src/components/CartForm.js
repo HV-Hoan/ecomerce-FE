@@ -14,7 +14,7 @@ const Cart = ({ userId }) => {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
             });
             setCartItems(response.data.cartItems);
-            setSelectedItems(new Set(response.data.cartItems.map(item => item.id_Product)));
+            setSelectedItems(new Set(response.data.cartItems.map(item => item.productId)));
         } catch (error) {
             console.error("Lỗi khi lấy giỏ hàng:", error);
         }
@@ -57,7 +57,7 @@ const Cart = ({ userId }) => {
     const navigate = useNavigate();
 
     const handleCheckout = () => {
-        const selectedProducts = cartItems.filter(item => selectedItems.has(item.id_Product));
+        const selectedProducts = cartItems.filter(item => selectedItems.has(item.productId));
         if (selectedProducts.length === 0) {
             alert("Vui lòng chọn ít nhất một sản phẩm để đặt hàng!");
             return;
@@ -67,7 +67,7 @@ const Cart = ({ userId }) => {
 
 
     const totalPrice = cartItems.reduce((total, item) => {
-        return selectedItems.has(item.id_Product) ? total + item.quantity * item.Product.price_Product : total;
+        return selectedItems.has(item.productId) ? total + item.quantity * item.Product.price_Product : total;
     }, 0);
 
     return (
@@ -78,11 +78,11 @@ const Cart = ({ userId }) => {
             ) : (
                 <div>
                     {cartItems.map((item) => (
-                        <div key={item.id_Product} className="cart-item">
+                        <div key={item.productId} className="cart-item">
                             <input
                                 type="checkbox"
-                                checked={selectedItems.has(item.id_Product)}
-                                onChange={() => toggleSelection(item.id_Product)}
+                                checked={selectedItems.has(item.productId)}
+                                onChange={() => toggleSelection(item.productId)}
                                 className="cart-checkbox"
                             />
                             <img
@@ -94,12 +94,12 @@ const Cart = ({ userId }) => {
                                 <p className="cart-name">{item.Product.name_Product}</p>
                                 <p className="cart-price">{item.Product.price_Product.toLocaleString()} đ</p>
                                 <div className="cart-quantity">
-                                    <button onClick={() => handleQuantityChange(item.id_Product, item.quantity - 1)}>-</button>
+                                    <button onClick={() => handleQuantityChange(item.productId, item.quantity - 1)}>-</button>
                                     <span>{item.quantity}</span>
-                                    <button onClick={() => handleQuantityChange(item.id_Product, item.quantity + 1)}>+</button>
+                                    <button onClick={() => handleQuantityChange(item.productId, item.quantity + 1)}>+</button>
                                 </div>
                             </div>
-                            <button className="cart-remove" onClick={() => handleRemove(item.id_Product)}>🗑</button>
+                            <button className="cart-remove" onClick={() => handleRemove(item.productId)}>🗑</button>
                         </div>
                     ))}
                     <h3 className="cart-total">Tổng tiền: {totalPrice.toLocaleString()} đ</h3>

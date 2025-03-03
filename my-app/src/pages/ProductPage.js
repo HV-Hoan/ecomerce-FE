@@ -42,20 +42,26 @@ const ProductPage = () => {
     };
 
     const handleCategoryChange = (e) => {
-        const options = Array.from(e.target.selectedOptions);
-        const selectedCategories = options.map((option) => option.value);
+        const selectedCategories = Array.from(e.target.selectedOptions).map(option => option.value);
+        console.log("Danh mục đã chọn:", selectedCategories); // Kiểm tra danh mục chọn
         setFormData({ ...formData, id_Category: selectedCategories });
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        console.log("Dữ liệu gửi lên API:", formData); // Kiểm tra dữ liệu trước khi gửi
 
         const data = new FormData();
         data.append("name_Product", formData.name_Product);
         data.append("description", formData.description);
         data.append("price_Product", formData.price_Product);
         data.append("image_Product", formData.image_Product);
-        formData.id_Category.forEach((categoryId) => data.append("id_Category[]", categoryId));
+
+        formData.id_Category.forEach((categoryId) => {
+            data.append("categoryId[]", categoryId); // Kiểm tra tên key
+        });
 
         try {
             const response = await fetch("http://localhost:5000/api/product", {
@@ -64,6 +70,8 @@ const ProductPage = () => {
             });
 
             const result = await response.json();
+            console.log("Kết quả API:", result); // Kiểm tra phản hồi từ server
+
             if (response.ok) {
                 alert("Thêm sản phẩm thành công!");
                 setFormData({
@@ -72,7 +80,7 @@ const ProductPage = () => {
                     price_Product: "",
                     id_Category: [],
                     image_Product: null
-                }); // Reset form sau khi thêm thành công
+                });
                 window.location.reload();
             } else {
                 alert(`Lỗi: ${result.error}`);
@@ -81,6 +89,7 @@ const ProductPage = () => {
             console.error("Lỗi khi thêm sản phẩm:", error);
         }
     };
+
 
     return (
         <div>
@@ -124,19 +133,15 @@ const ProductPage = () => {
                         onChange={handleFileChange}
                     />
                     <label>Chọn danh mục:</label>
-                    <select
-                        multiple
-                        value={formData.id_Category}
-                        onChange={handleCategoryChange}
-                        className="category-select"
-                        required
-                    >
+                    <select multiple value={formData.id_Category} onChange={handleCategoryChange}>
                         {categories.map((category) => (
-                            <option key={category.id_Category} value={category.id_Category}>
+                            <option key={category.id} value={category.id}>
                                 {category.name_Category}
                             </option>
                         ))}
                     </select>
+
+
 
                     <button type="submit" className="confirm-btn">Thêm sản phẩm</button>
                 </form>
