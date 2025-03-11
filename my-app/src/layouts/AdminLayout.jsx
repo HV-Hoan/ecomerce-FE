@@ -20,6 +20,12 @@ const AdminLayout = () => {
                     <li>
                         <Link to="/admin/product" className="menu-link"> Quản lý sản phẩm</Link>
                     </li>
+                    <li>
+                        <Link to="/admin/order" className="menu-link"> Quản lý đơn hàng</Link>
+                    </li>
+                    <li>
+                        <Link to="/admin/logout" className="menu-link"> Đăng xuất</Link>
+                    </li>
                 </ul>
             </nav>
 

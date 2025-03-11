@@ -1,0 +1,93 @@
+/* Thiết lập chung cho đơn hàng */
+.box-order {
+    max-width: 300px;
+    /* Giới hạn chiều rộng */
+    padding: 16px;
+    /* Khoảng cách bên trong */
+    border: 1px solid #ccc;
+    /* Viền nhẹ */
+    border-radius: 8px;
+    /* Bo góc */
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    /* Đổ bóng nhẹ */
+    background-color: white;
+    /* Màu nền */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-left: 0;
+    /* Đưa sát về lề trái */
+}
+
+/* Hiệu ứng khi hover vào đơn hàng */
+.box-order:hover {
+    transform: scale(1.02);
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Căn chỉnh khoảng cách giữa các dòng */
+.box-order p {
+    margin-bottom: 8px;
+}
+
+/* Căn chỉnh chữ trạng thái */
+.box-order strong {
+    font-weight: 600;
+}
+
+/* Định dạng trạng thái đơn hàng */
+.text-yellow-500 {
+    color: #eab308;
+    /* Màu vàng */
+}
+
+.text-green-500 {
+    color: #16a34a;
+    /* Màu xanh lá */
+}
+
+.text-red-500 {
+    color: #dc2626;
+    /* Màu đỏ */
+}
+
+/* Căn sát lề trái danh sách đơn hàng */
+.space-y-4 {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Căn sát về bên trái */
+    gap: 16px;
+    /* Khoảng cách giữa các đơn hàng */
+}
+
+.fixed-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.order-detail-image {
+    width: 50px;
+    /* Hoặc điều chỉnh kích thước phù hợp */
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.product-image {
+    width: 64px;
+    height: 64px;
+    max-width: 64px;
+    max-height: 64px;
+    object-fit: contain;
+    /* Đảm bảo ảnh không bị méo */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}

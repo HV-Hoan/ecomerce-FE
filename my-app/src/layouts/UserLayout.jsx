@@ -20,6 +20,12 @@ const UserLayout = () => {
                     <li>
                         <Link to="/user/cart" className="menu-link">Giỏ hàng của bạn</Link>
                     </li>
+                    <li>
+                        <Link to="/user/in4" className="menu-link">Đơn hàng của bạn</Link>
+                    </li>
+                    <li>
+                        <Link to="/user/logout" className="menu-link"> Đăng xuất</Link>
+                    </li>
                 </ul>
             </nav>
 

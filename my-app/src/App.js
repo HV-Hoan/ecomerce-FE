@@ -11,6 +11,8 @@ import CategoryPage from "./pages/CategoryPage";
 import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
+import OrderPage from "./pages/OrderPage";
+import LogOut from "./pages/LogOut";
 
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
@@ -39,15 +41,18 @@ function App() {
           <Route path="/admin/in4" element={<In4Page />} />
           <Route path="/admin/category" element={<CategoryPage />} />
           <Route path="/admin/product" element={<ProductPage />} />
+          <Route path="/admin/order" element={<OrderPage />} />
+          <Route path="/admin/logout" element={<LogOut />} />
         </Route>
 
         {/* Layout cho User */}
         <Route element={<UserLayout />}>
           <Route path="/user/home" element={<HomePage />} />
-          {/* <Route path="/user/in4" element={<UserPage />} /> */}
           <Route path="/user/in4" element={<In4Page />} />
           <Route path="/user/category" element={<CategoryPage />} />
           <Route path="/user/cart" element={<CartPage />} />
+          <Route path="/user/in4" element={<In4Page />} />
+          <Route path="/user/logout" element={<LogOut />} />
         </Route>
       </Routes>
     </Router>

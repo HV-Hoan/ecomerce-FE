@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // Import đúng cách
-import "../css/LoginForm.css"
+import { jwtDecode } from "jwt-decode";
+import "../css/LoginForm.css";
 
 const LoginForm = () => {
     const [username, setUsername] = useState("");
@@ -20,10 +20,10 @@ const LoginForm = () => {
                 password,
             });
 
-            const { token } = response.data;
-            localStorage.setItem("token", token);
+            const { accessToken } = response.data;
+            localStorage.setItem("token", accessToken);  // Lưu token vào localStorage
 
-            const decoded = jwtDecode(token); // Giải mã token
+            const decoded = jwtDecode(accessToken);
 
             alert("Đăng nhập thành công!");
             if (decoded.role === "admin") {

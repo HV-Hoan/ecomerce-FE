@@ -105,12 +105,16 @@ const ProductFormList = () => {
             alert("Chỉ người dùng mới có thể đánh giá");
             return;
         }
+
+        const token = localStorage.getItem("token");
+        console.log("Token trước khi gửi request:", token); // Kiểm tra token
+
         try {
             const response = await fetch(`http://localhost:5000/api/vote/${productId}/rate`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${token}`, // Gửi token trong header
                 },
                 body: JSON.stringify({ rating }),
             });
@@ -121,14 +125,14 @@ const ProductFormList = () => {
             }
 
             const result = await response.json();
-            alert(`Đánh giá sản phẩm thành công! Điểm đánh giá trung bình là: ${result.averageRating}`);
-            window.location.reload();
-            fetchProducts();
+            alert(`Đánh giá thành công! Điểm trung bình: ${result.averageRating}`);
+            fetchProducts(); // Cập nhật lại danh sách sản phẩm
         } catch (error) {
-            console.error("Error rating product:", error.message);
+            console.error("Lỗi khi đánh giá sản phẩm:", error.message);
             alert(error.message);
         }
     };
+
 
     const handleOpenUpdateModal = (product) => {
         setProductToUpdate(product.id);
@@ -180,6 +184,7 @@ const ProductFormList = () => {
             alert(error.message);
         }
     };
+
 
     if (loading) return <p>Đang tải dữ liệu...</p>;
     if (error) return <p>Lỗi: {error}</p>;
