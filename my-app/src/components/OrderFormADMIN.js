@@ -8,6 +8,9 @@ const OrderList = () => {
     const [error, setError] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [updateModal, setUpdateModal] = useState(false);
+    const [newStatus, setNewStatus] = useState("");
+    const [newPaymentStatus, setNewPaymentStatus] = useState("");
 
     useEffect(() => {
         const fetchOrders = async () => {
@@ -32,6 +35,21 @@ const OrderList = () => {
             setShowModal(true); // Hiển thị modal khi có dữ liệu
         } catch (error) {
             console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
+        }
+    };
+
+    const updateOrderStatus = async (orderId) => {
+        try {
+            await axios.put(`http://localhost:5000/api/order/${orderId}/update`, {
+                status_Order: newStatus,
+                payment_status: newPaymentStatus,
+            });
+            alert("Cập nhật trạng thái thành công!");
+            setUpdateModal(false);
+            window.location.reload();
+        } catch (error) {
+            console.error("Lỗi khi cập nhật đơn hàng:", error);
+            alert("Lỗi khi cập nhật đơn hàng!");
         }
     };
 
@@ -75,11 +93,11 @@ const OrderList = () => {
                                 <strong> PT Thanh toán:</strong> {order.payment_method === "0" ? " Tiền mặt" : " Chuyển khoản"}
                             </p>
                             <p className="text-gray-700">
-                                <strong> T.Thanh toán:</strong> {order.payment_status === "0"
+                                <strong> Thanh toán:</strong> {order.payment_status === "0"
                                     ? "Đang xử lý"
                                     : order.payment_status === "1"
-                                        ? " Đang vận chuyển"
-                                        : " Đã giao"}
+                                        ? " Đã thanh toán "
+                                        : " Đã hủy"}
                             </p>
 
                             <button
@@ -89,8 +107,8 @@ const OrderList = () => {
                                 Xem chi tiết
                             </button>
                             <button
-                                // onClick={() => fetchOrderDetails(order.id)}
-                                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
+                                onClick={() => setUpdateModal(order.id)}
+                                className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700 transition"
                             >
                                 Cập nhật trạng thái
                             </button>
@@ -139,6 +157,41 @@ const OrderList = () => {
                         <button
                             onClick={closeModal}
                             className="mt-4 w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition"
+                        >
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {updateModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Cập nhật đơn hàng</h2>
+                        <label className="block">Trạng thái đơn hàng:</label>
+                        <select className="border p-2 w-full" onChange={(e) => setNewStatus(e.target.value)}>
+                            <option value="0">Chờ duyệt</option>
+                            <option value="1">Hoàn thành</option>
+                            <option value="2">Hủy</option>
+                        </select>
+
+                        <label className="block mt-4">Trạng thái thanh toán:</label>
+                        <select className="border p-2 w-full" onChange={(e) => setNewPaymentStatus(e.target.value)}>
+                            <option value="0">Đang xử lý</option>
+                            <option value="1">Đã thanh toán</option>
+                            <option value="2">Đã hủy</option>
+                        </select>
+
+                        <button
+                            onClick={() => updateOrderStatus(updateModal)}
+                            className="mt-4 w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
+                        >
+                            Cập nhật
+                        </button>
+
+                        <button
+                            onClick={() => setUpdateModal(false)}
+                            className="mt-2 w-full px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700 transition"
                         >
                             Đóng
                         </button>

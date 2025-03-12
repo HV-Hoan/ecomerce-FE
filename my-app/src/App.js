@@ -12,6 +12,7 @@ import HomePage from "./pages/HomePage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import OrderPage from "./pages/OrderPage";
+import OrderPage2 from "./pages/OrderPage2";
 import LogOut from "./pages/LogOut";
 
 import AuthLayout from "./layouts/AuthLayout";
@@ -51,7 +52,7 @@ function App() {
           <Route path="/user/in4" element={<In4Page />} />
           <Route path="/user/category" element={<CategoryPage />} />
           <Route path="/user/cart" element={<CartPage />} />
-          <Route path="/user/in4" element={<In4Page />} />
+          <Route path="/user/order" element={<OrderPage2 />} />
           <Route path="/user/logout" element={<LogOut />} />
         </Route>
       </Routes>

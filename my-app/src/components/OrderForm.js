@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const Order = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const selectedProducts = location.state?.selectedProducts || [];
     const [loading, setLoading] = useState(false);
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setUserId(decodedToken.id);
+            } catch (error) {
+                console.error("Lỗi khi giải mã token:", error);
+            }
+        }
+    }, []);
 
     const [paymentMethods, setPaymentMethods] = useState(
         selectedProducts.reduce((acc, item) => {
-            acc[item.productId] = "0"; // Mặc định là tiền mặt (0)
+            acc[item.productId] = "0";
             return acc;
         }, {})
     );
@@ -23,16 +37,20 @@ const Order = () => {
     };
 
     const handleConfirmOrder = async () => {
+        if (!userId) {
+            alert("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!");
+            return;
+        }
+
         setLoading(true);
         try {
-            const userId = 1; // Lấy userId từ session hoặc context
             const totalPrice = selectedProducts.reduce(
                 (total, item) => total + item.quantity * item.Product.price_Product,
                 0
             );
             const totalQuantity = selectedProducts.reduce((sum, item) => sum + item.quantity, 0);
 
-            // Gửi đơn hàng lên API
+
             const response = await axios.post("http://localhost:5000/api/order/create", {
                 userId,
                 price: totalPrice,
